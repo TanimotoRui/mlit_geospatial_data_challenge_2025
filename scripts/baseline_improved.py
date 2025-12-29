@@ -28,7 +28,7 @@ warnings.filterwarnings('ignore')
 TRAIN_PATH = "data/raw/train.csv"
 TEST_PATH = "data/raw/test.csv"
 SAMPLE_PATH = "data/raw/sample_submit.csv"
-OUTPUT_DIR = "submissions"
+OUTPUT_DIR = "submissions/exp002_improved"
 
 print("=" * 60)
 print("改善版ベースライン - CatBoost + 特徴量エンジニアリング")
@@ -81,8 +81,9 @@ submission = sample_sub.copy()
 submission['money_room'] = predictions.astype(int)
 
 # 保存
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-output_path = f"{OUTPUT_DIR}/{timestamp}_improved_catboost.csv"
+output_path = f"{OUTPUT_DIR}/submission_{timestamp}.csv"
 submission.to_csv(output_path, index=False, header=False)
 
 print(f"\n{'='*60}")
@@ -103,7 +104,7 @@ feature_importance = pd.DataFrame({
     'importance': models[0].feature_importances_
 }).sort_values('importance', ascending=False)
 
-importance_path = f"{OUTPUT_DIR}/{timestamp}_feature_importance.csv"
+importance_path = f"{OUTPUT_DIR}/feature_importance_{timestamp}.csv"
 feature_importance.to_csv(importance_path, index=False)
 print(f"Feature importance saved to: {importance_path}")
 

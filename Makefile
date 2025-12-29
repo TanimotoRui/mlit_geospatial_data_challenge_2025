@@ -44,6 +44,9 @@ baseline:  ## ベースラインモデルを実行（シンプル版）
 baseline-improved:  ## 改善版ベースラインを実行（特徴量エンジニアリング版）
 	uv run python scripts/baseline_improved.py
 
+baseline-geo:  ## 地理空間特徴量版ベースラインを実行（K-means + 集約特徴量）
+	uv run python scripts/baseline_with_geo_features.py
+
 notebook:  ## Jupyter Labを起動
 	uv run jupyter lab
 

@@ -95,8 +95,12 @@ wandb/
 .dvc/
 *.dvc
 
-# Submissions (keep track in Git)
-# submissions/
+# Submissions
+submissions/exp*/submission_*.csv
+submissions/exp*/feature_importance_*.csv
+# Keep directory structure
+!submissions/exp*/
+!submissions/README.md
 
 # CatBoost
 catboost_info/

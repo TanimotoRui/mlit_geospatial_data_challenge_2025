@@ -3,6 +3,7 @@ CatBoost Baseline Model
 最小限の前処理でサクッと1sub
 """
 
+import os
 import pandas as pd
 import numpy as np
 from catboost import CatBoostRegressor, Pool
@@ -16,7 +17,7 @@ warnings.filterwarnings("ignore")
 TRAIN_PATH = "data/raw/train.csv"
 TEST_PATH = "data/raw/test.csv"
 SAMPLE_PATH = "data/raw/sample_submit.csv"
-OUTPUT_DIR = "submissions"
+OUTPUT_DIR = "submissions/exp001_baseline"
 
 print("=" * 60)
 print("CatBoost Baseline - 最小限構成")
@@ -184,9 +185,10 @@ submission = sample_sub.copy()
 submission["money_room"] = predictions
 
 # 保存
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-output_path = f"{OUTPUT_DIR}/{timestamp}_baseline_catboost.csv"
-submission.to_csv(output_path, index=False)
+output_path = f"{OUTPUT_DIR}/submission_{timestamp}.csv"
+submission.to_csv(output_path, index=False, header=False)
 
 print(f"\n[6] 完了!")
 print(f"Submission saved to: {output_path}")
