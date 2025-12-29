@@ -281,8 +281,8 @@ def create_derived_features(
     
     # 時系列特徴量
     if 'target_ym' in df.columns:
-        df_copy['target_year'] = df_copy['target_ym'] // 100
-        df_copy['target_month'] = df_copy['target_ym'] % 100
+        df_copy['target_year'] = df_copy['target_ym'].astype(int) // 100
+        df_copy['target_month'] = df_copy['target_ym'].astype(int) % 100
         df_copy['is_january'] = (df_copy['target_month'] == 1).astype(int)
         df_copy['is_july'] = (df_copy['target_month'] == 7).astype(int)
         feature_count += 4
