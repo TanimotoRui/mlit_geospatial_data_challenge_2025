@@ -1,0 +1,54 @@
+# exp001: ベースラインモデル
+
+experiment:
+  name: exp001_baseline
+  description: "基本的な物件情報のみを使用したベースラインモデル"
+  date: "2025-12-29"
+  author: "Your Name"
+
+data:
+  train_path: "data/processed/train.csv"
+  test_path: "data/processed/test.csv"
+  target: "price"
+  
+features:
+  # 基本特徴量
+  basic:
+    - "area"
+    - "age"
+    - "floor"
+    - "rooms"
+  
+  # カテゴリカル特徴量
+  categorical:
+    - "prefecture"
+    - "city"
+    - "structure"
+
+model:
+  name: "lightgbm"
+  params:
+    objective: "regression"
+    metric: "rmse"
+    boosting_type: "gbdt"
+    num_leaves: 31
+    learning_rate: 0.05
+    feature_fraction: 0.9
+    bagging_fraction: 0.8
+    bagging_freq: 5
+    verbose: -1
+    n_estimators: 1000
+    early_stopping_rounds: 100
+    random_state: 42
+
+validation:
+  method: "kfold"
+  n_splits: 5
+  shuffle: true
+  random_state: 42
+
+output:
+  model_path: "experiments/models/exp001_model.pkl"
+  results_path: "experiments/results/exp001/"
+  submission_path: "submissions/exp001_submission.csv"
+

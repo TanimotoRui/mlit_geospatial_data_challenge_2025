@@ -1,0 +1,30 @@
+# Jupyter Notebooks
+
+このディレクトリには、データ分析・モデル開発用のJupyter Notebookを配置します。
+
+## ディレクトリ構成
+
+- `eda/`: 探索的データ分析
+- `features/`: 特徴量エンジニアリング
+- `models/`: モデル開発・実験
+
+## ノートブック命名規則
+
+番号を付けて順序を明確にする：
+
+```
+notebooks/
+├── eda/
+│   ├── 01_initial_data_exploration.ipynb
+│   ├── 02_gis_data_analysis.ipynb
+│   └── 03_target_distribution.ipynb
+├── features/
+│   ├── 01_basic_features.ipynb
+│   ├── 02_gis_features.ipynb
+│   └── 03_aggregation_features.ipynb
+└── models/
+    ├── 01_baseline_lightgbm.ipynb
+    ├── 02_feature_selection.ipynb
+    └── 03_hyperparameter_tuning.ipynb
+```
+

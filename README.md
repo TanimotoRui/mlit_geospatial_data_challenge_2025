@@ -301,3 +301,189 @@ SIGNATE 利用規約
 プライバシーポリシー
 © 2018 - 2025 SIGNATE Inc.
 新しいお知らせがあります
+
+---
+
+## プロジェクトセットアップ
+
+### 必要環境
+
+- Python 3.9以上
+- [uv](https://github.com/astral-sh/uv) (高速パッケージマネージャー)
+- Git
+
+### uvのインストール
+
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# または Homebrew (macOS)
+brew install uv
+```
+
+### セットアップ手順
+
+```bash
+# 1. リポジトリのクローン（既にクローン済みの場合はスキップ）
+git clone <repository-url>
+cd mlit_geospatial_data_challenge_2025
+
+# 2. 依存パッケージのインストール（仮想環境も自動作成）
+uv sync
+
+# 3. 開発用パッケージも含めてインストールする場合
+uv sync --extra dev
+
+# 4. データのダウンロード
+# SIGNATEからデータをダウンロードし、data/raw/ に配置
+```
+
+### 基本的な使い方
+
+```bash
+# パッケージの追加
+uv add <package-name>
+
+# 開発用パッケージの追加
+uv add --dev <package-name>
+
+# Jupyter Labの起動
+uv run jupyter lab
+
+# Pythonスクリプトの実行
+uv run python src/data/load.py
+
+# テストの実行
+uv run pytest
+
+# インタラクティブシェル
+uv run python
+```
+
+### Makefileを使った便利なコマンド
+
+```bash
+# ヘルプの表示
+make help
+
+# 依存関係のインストール
+make install-dev
+
+# テストの実行
+make test
+
+# コードフォーマット
+make format
+
+# リント実行
+make lint
+
+# すべてのチェック（フォーマット、リント、テスト）
+make check
+
+# Jupyter Labの起動
+make notebook
+
+# 一時ファイルのクリーンアップ
+make clean
+```
+
+### ディレクトリ構造
+
+詳細なプロジェクト構造とワークフローについては、[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) を参照してください。
+
+```
+mlit_geospatial_data_challenge_2025/
+├── data/                      # データ（Gitには含めない）
+│   ├── raw/                   # 元データ
+│   ├── interim/              # 中間処理データ
+│   ├── processed/            # 前処理済みデータ
+│   └── external/             # 外部データ
+├── notebooks/                 # Jupyter Notebook
+│   ├── eda/                  # 探索的データ分析
+│   ├── features/             # 特徴量エンジニアリング
+│   └── models/               # モデル開発
+├── src/                      # 再利用可能なコード
+│   ├── data/                 # データ処理
+│   ├── features/             # 特徴量エンジニアリング
+│   ├── models/               # モデル定義・学習・予測
+│   ├── visualization/        # 可視化
+│   └── utils/                # ユーティリティ
+├── experiments/              # 実験管理
+│   ├── configs/             # 実験設定ファイル
+│   ├── results/             # 実験結果
+│   └── models/              # 学習済みモデル
+├── submissions/             # 提出ファイル
+├── tests/                   # テストコード
+└── docs/                    # ドキュメント
+```
+
+### ワークフロー
+
+1. **データ探索**: `notebooks/eda/` でデータの理解と可視化
+2. **特徴量エンジニアリング**: `notebooks/features/` で特徴量の試作 → `src/features/` に実装
+3. **モデル開発**: `notebooks/models/` で実験 → `experiments/` で管理
+4. **提出**: `submissions/` に予測結果を保存して提出
+
+### ドキュメント
+
+- [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - プロジェクト構造の詳細
+- [docs/uv_usage.md](docs/uv_usage.md) - uvの使い方ガイド
+- [docs/data_description.md](docs/data_description.md) - データの説明
+- [docs/features.md](docs/features.md) - 特徴量一覧
+- [docs/experiments.md](docs/experiments.md) - 実験ログ
+
+### テスト
+
+```bash
+# テストの実行
+uv run pytest
+
+# カバレッジ付きでテスト
+uv run pytest --cov=src --cov-report=html
+
+# 特定のテストファイルを実行
+uv run pytest tests/test_metrics.py
+```
+
+### コード品質
+
+```bash
+# コードフォーマット
+uv run black src/ tests/
+
+# import文のソート
+uv run isort src/ tests/
+
+# リント
+uv run flake8 src/ tests/
+
+# 型チェック
+uv run mypy src/
+
+# すべてをまとめて実行
+uv run black src/ tests/ && uv run isort src/ tests/ && uv run flake8 src/ tests/
+```
+
+## タスク管理
+
+- [ ] データのダウンロードと配置
+- [ ] EDA（探索的データ分析）の実施
+- [ ] ベースラインモデルの作成
+- [ ] GIS特徴量の作成
+- [ ] モデルの改善
+- [ ] アンサンブル
+
+## 参考リンク
+
+- [SIGNATE コンペページ](https://signate.jp/)
+- [国土数値情報ダウンロードサイト](https://nlftp.mlit.go.jp/)
+- Slackワークスペース: データREADME.pdfを参照
+
+## ライセンス
+
+データの利用規約については、SIGNATE上の参加規約を参照してください。
