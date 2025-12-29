@@ -152,7 +152,7 @@ def preprocess_for_catboost(
     # 目的変数の取得
     target = train[target_col].copy()
     if apply_log:
-        print(f"目的変数にlog1p変換を適用")
+        print("目的変数にlog1p変換を適用")
         target = np.log1p(target)
 
     # 削除する列

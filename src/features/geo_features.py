@@ -92,7 +92,7 @@ def create_cluster_aggregation_features(
     Returns:
         train, test
     """
-    print(f"\n[Cluster Aggregation Features]")
+    print("\n[Cluster Aggregation Features]")
 
     if agg_cols is None:
         agg_cols = ["house_area", "year_built", "walk_distance1", "money_kyoueki"]
@@ -122,7 +122,7 @@ def create_cluster_aggregation_features(
         train_copy = train_copy.merge(cluster_target_stats, on=cluster_col, how="left")
         test_copy = test_copy.merge(cluster_target_stats, on=cluster_col, how="left")
 
-        print(f"  - Target aggregation: 5 features")
+        print("  - Target aggregation: 5 features")
 
     # クラスターごとの物件数
     cluster_counts = (
@@ -130,7 +130,7 @@ def create_cluster_aggregation_features(
     )
     train_copy = train_copy.merge(cluster_counts, on=cluster_col, how="left")
     test_copy = test_copy.merge(cluster_counts, on=cluster_col, how="left")
-    print(f"  - Cluster count: 1 feature")
+    print("  - Cluster count: 1 feature")
 
     # その他の数値特徴量の集約
     for col in agg_cols:
@@ -173,7 +173,7 @@ def create_target_encoding_features(
     Returns:
         train, test
     """
-    print(f"\n[Target Encoding Features]")
+    print("\n[Target Encoding Features]")
 
     if categorical_cols is None:
         categorical_cols = ["city", "prefecture", "eki_name1"]
@@ -240,7 +240,7 @@ def create_distance_features(
     Returns:
         DataFrame
     """
-    print(f"\n[Distance Features]")
+    print("\n[Distance Features]")
 
     df_copy = df.copy()
 
@@ -272,7 +272,7 @@ def create_derived_features(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame
     """
-    print(f"\n[Derived Features]")
+    print("\n[Derived Features]")
 
     df_copy = df.copy()
     feature_count = 0

@@ -1,7 +1,6 @@
 """評価指標のテスト"""
 
 import numpy as np
-import pytest
 
 from src.utils.metrics import calculate_metrics, mape, rmse, rmsle
 
