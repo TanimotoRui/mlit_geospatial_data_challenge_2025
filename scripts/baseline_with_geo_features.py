@@ -112,9 +112,9 @@ print(f"カテゴリカル特徴量数: {len(cat_features)}")
 
 # モデルパラメータ
 params = {
-    'iterations': 1000,
+    'iterations': 500,  # メモリ削減
     'learning_rate': 0.05,
-    'depth': 6,
+    'depth': 5,  # メモリ削減
     'loss_function': 'MAE',
     'eval_metric': 'MAE',
     'random_seed': 42,
@@ -128,7 +128,8 @@ print("Cross Validation")
 print("=" * 60)
 models, cv_scores = train_catboost_cv(
     train_features, target, cat_features,
-    n_splits=5, params=params, verbose=100
+    n_splits=3,  # メモリ削減
+    params=params, verbose=100
 )
 
 # テストデータで予測
