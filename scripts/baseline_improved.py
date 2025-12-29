@@ -52,7 +52,7 @@ train_features, test_features, target, cat_features = preprocess_for_catboost(
 
 # モデルパラメータ
 params = {
-    'iterations': 1000,
+    'iterations': 2000,
     'learning_rate': 0.05,
     'depth': 6,
     'loss_function': 'MAE',  # log変換後はMAEが効果的
