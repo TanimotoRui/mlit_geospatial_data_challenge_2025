@@ -126,7 +126,7 @@ pool_train = Pool(train_features, target, cat_features=cat_features)
 
 # モデル定義
 model = CatBoostRegressor(
-    iterations=10,
+    iterations=500,
     learning_rate=0.05,
     depth=6,
     loss_function="MAPE",  # 評価指標に合わせる
