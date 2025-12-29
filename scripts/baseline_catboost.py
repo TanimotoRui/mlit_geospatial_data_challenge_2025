@@ -26,10 +26,12 @@ print("=" * 60)
 print("\n[1] データ読み込み中...")
 train = pd.read_csv(TRAIN_PATH)
 test = pd.read_csv(TEST_PATH)
-sample_sub = pd.read_csv(SAMPLE_PATH)
+# sample_submit.csvはヘッダーなし
+sample_sub = pd.read_csv(SAMPLE_PATH, header=None, names=['id', 'money_room'])
 
 print(f"Train shape: {train.shape}")
 print(f"Test shape: {test.shape}")
+print(f"Sample submission shape: {sample_sub.shape}")
 
 # 目的変数
 target = train["money_room"]
@@ -124,7 +126,7 @@ pool_train = Pool(train_features, target, cat_features=cat_features)
 
 # モデル定義
 model = CatBoostRegressor(
-    iterations=1000,
+    iterations=10,
     learning_rate=0.05,
     depth=6,
     loss_function="MAPE",  # 評価指標に合わせる
