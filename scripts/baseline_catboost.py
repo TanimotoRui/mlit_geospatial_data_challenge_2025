@@ -137,6 +137,7 @@ model = CatBoostRegressor(
 # 学習
 model.fit(pool_train)
 
+"""
 # CV Score確認（簡易版）
 print("\n[4] Cross Validation...")
 kf = KFold(n_splits=5, shuffle=True, random_state=42)
@@ -169,6 +170,7 @@ for fold, (train_idx, valid_idx) in enumerate(kf.split(train_features), 1):
     print(f"Fold {fold} MAPE: {mape:.4f}%")
 
 print(f"\nCV MAPE: {np.mean(cv_scores):.4f}% (+/- {np.std(cv_scores):.4f}%)")
+"""
 
 # テストデータで予測
 print("\n[5] 予測...")
