@@ -487,11 +487,26 @@ uv run mypy src/
 uv run black src/ tests/ && uv run isort src/ tests/ && uv run flake8 src/ tests/
 ```
 
+## クイックスタート - 最速で1sub 🚀
+
+```bash
+# 1. 依存関係のインストール
+uv sync --extra dev
+
+# 2. ベースラインモデル実行
+make baseline
+
+# 3. submissions/ の最新CSVをSIGNATEに提出
+```
+
+詳細は [README_BASELINE.md](README_BASELINE.md) を参照。
+
 ## タスク管理
 
-- [ ] データのダウンロードと配置
+- [x] データのダウンロードと配置
+- [x] ベースラインモデルの作成（CatBoost）
 - [ ] EDA（探索的データ分析）の実施
-- [ ] ベースラインモデルの作成
+- [ ] 特徴量エンジニアリング
 - [ ] GIS特徴量の作成
 - [ ] モデルの改善
 - [ ] アンサンブル

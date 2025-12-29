@@ -1,0 +1,182 @@
+"""
+CatBoost Baseline Model
+最小限の前処理でサクッと1sub
+"""
+
+import pandas as pd
+import numpy as np
+from catboost import CatBoostRegressor, Pool
+from sklearn.model_selection import KFold
+from datetime import datetime
+import warnings
+
+warnings.filterwarnings("ignore")
+
+# パス設定
+TRAIN_PATH = "data/raw/train.csv"
+TEST_PATH = "data/raw/test.csv"
+SAMPLE_PATH = "data/raw/sample_submit.csv"
+OUTPUT_DIR = "submissions"
+
+print("=" * 60)
+print("CatBoost Baseline - 最小限構成")
+print("=" * 60)
+
+# データ読み込み
+print("\n[1] データ読み込み中...")
+train = pd.read_csv(TRAIN_PATH)
+test = pd.read_csv(TEST_PATH)
+sample_sub = pd.read_csv(SAMPLE_PATH)
+
+print(f"Train shape: {train.shape}")
+print(f"Test shape: {test.shape}")
+
+# 目的変数
+target = train["money_room"]
+print(f"\nTarget statistics:")
+print(target.describe())
+
+# 削除するカラム
+drop_cols = [
+    "money_room",  # 目的変数
+    "building_id",  # ID系
+    "unit_id",
+    "bukken_id",
+    # 日付系（とりあえず削除）
+    "building_create_date",
+    "building_modify_date",
+    "reform_exterior_date",
+    "reform_common_area_date",
+    "reform_date",
+    "reform_wet_area_date",
+    "reform_interior_date",
+    "renovation_date",
+    "snapshot_create_date",
+    "new_date",
+    "snapshot_modify_date",
+    "timelimit_date",
+    "usable_date",
+    # テキスト系
+    "building_name",
+    "building_name_ruby",
+    "homes_building_name",
+    "homes_building_name_ruby",
+    "unit_name",
+    "name_ruby",
+    "full_address",
+    "addr2_name",
+    "addr3_name",
+    "rosen_name1",
+    "eki_name1",
+    "bus_stop1",
+    "rosen_name2",
+    "eki_name2",
+    "bus_stop2",
+    "traffic_other",
+    "traffic_car",
+    "parking_memo",
+    "school_ele_name",
+    "school_jun_name",
+    "est_other_name",
+    "reform_exterior_other",
+    "reform_place_other",
+    "reform_wet_area_other",
+    "reform_interior_other",
+    "reform_etc",
+    "renovation_etc",
+    "empty_contents",
+    "money_sonota_str1",
+    "money_sonota_str2",
+    "money_sonota_str3",
+]
+
+# 特徴量作成
+print("\n[2] 特徴量作成...")
+train_features = train.drop(columns=drop_cols, errors="ignore")
+test_features = test.drop(columns=drop_cols, errors="ignore")
+
+# カテゴリカル変数の自動検出
+cat_features = []
+for col in train_features.columns:
+    if train_features[col].dtype == "object":
+        cat_features.append(col)
+    elif train_features[col].nunique() < 50:  # ユニーク数が少ないものもカテゴリカルに
+        cat_features.append(col)
+
+print(f"特徴量数: {len(train_features.columns)}")
+print(f"カテゴリカル特徴量数: {len(cat_features)}")
+
+# CatBoost用のPool作成
+print("\n[3] CatBoostモデル学習...")
+pool_train = Pool(train_features, target, cat_features=cat_features)
+
+# モデル定義
+model = CatBoostRegressor(
+    iterations=1000,
+    learning_rate=0.05,
+    depth=6,
+    loss_function="MAPE",  # 評価指標に合わせる
+    eval_metric="MAPE",
+    random_seed=42,
+    verbose=100,
+    early_stopping_rounds=50,
+)
+
+# 学習
+model.fit(pool_train)
+
+# CV Score確認（簡易版）
+print("\n[4] Cross Validation...")
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+cv_scores = []
+
+for fold, (train_idx, valid_idx) in enumerate(kf.split(train_features), 1):
+    X_train, X_valid = train_features.iloc[train_idx], train_features.iloc[valid_idx]
+    y_train, y_valid = target.iloc[train_idx], target.iloc[valid_idx]
+
+    pool_tr = Pool(X_train, y_train, cat_features=cat_features)
+    pool_val = Pool(X_valid, y_valid, cat_features=cat_features)
+
+    cv_model = CatBoostRegressor(
+        iterations=1000,
+        learning_rate=0.05,
+        depth=6,
+        loss_function="MAPE",
+        eval_metric="MAPE",
+        random_seed=42,
+        verbose=0,
+        early_stopping_rounds=50,
+    )
+
+    cv_model.fit(pool_tr, eval_set=pool_val)
+
+    # MAPE計算
+    y_pred = cv_model.predict(X_valid)
+    mape = np.mean(np.abs((y_valid - y_pred) / y_valid)) * 100
+    cv_scores.append(mape)
+    print(f"Fold {fold} MAPE: {mape:.4f}%")
+
+print(f"\nCV MAPE: {np.mean(cv_scores):.4f}% (+/- {np.std(cv_scores):.4f}%)")
+
+# テストデータで予測
+print("\n[5] 予測...")
+pool_test = Pool(test_features, cat_features=cat_features)
+predictions = model.predict(pool_test)
+
+# Submission作成
+submission = sample_sub.copy()
+submission["money_room"] = predictions
+
+# 保存
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+output_path = f"{OUTPUT_DIR}/{timestamp}_baseline_catboost.csv"
+submission.to_csv(output_path, index=False)
+
+print(f"\n[6] 完了!")
+print(f"Submission saved to: {output_path}")
+print(f"Prediction stats:")
+print(submission["money_room"].describe())
+print("\n" + "=" * 60)
+print("Ready to submit! 🚀")
+print("=" * 60)
+

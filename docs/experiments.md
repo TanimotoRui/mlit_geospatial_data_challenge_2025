@@ -14,27 +14,37 @@
 
 ---
 
-## exp001 - ベースライン
+## exp001 - ベースライン (CatBoost)
 
-**日時**: YYYY-MM-DD
+**日時**: 2025-12-29
 
-**目的**: ベースラインモデルの作成
+**目的**: 最小限の前処理でサクッと1sub
 
 **特徴量**:
-- 基本的な物件情報（面積、築年数、最寄駅距離など）
+- 数値・カテゴリカル特徴量（自動判定）
+- ID系、日付系、テキスト系は除外
+- 特徴量数: 約60-70個（自動選択）
 
 **モデル**:
-- LightGBM (デフォルトパラメータ)
+- CatBoost Regressor
+  - iterations: 1000
+  - learning_rate: 0.05
+  - depth: 6
+  - loss_function: MAPE
+  - early_stopping_rounds: 50
 
 **検証**:
 - 5-Fold CV
 
 **結果**:
-- CV Score: TBD
+- CV MAPE: TBD
 - Public LB Score: TBD
 
 **メモ**:
-- まずはシンプルなモデルから開始
+- CatBoostは欠損値・カテゴリカル変数をそのまま扱える
+- 前処理ほぼなしでも動く
+- これをベースに改善していく
+- スクリプト: `scripts/baseline_catboost.py`
 
 ---
 
