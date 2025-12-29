@@ -7,11 +7,11 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
     RMSE (Root Mean Squared Error)
-    
+
     Args:
         y_true: 真値
         y_pred: 予測値
-    
+
     Returns:
         float: RMSE
     """
@@ -21,11 +21,11 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 def rmsle(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
     RMSLE (Root Mean Squared Logarithmic Error)
-    
+
     Args:
         y_true: 真値
         y_pred: 予測値
-    
+
     Returns:
         float: RMSLE
     """
@@ -35,11 +35,11 @@ def rmsle(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 def mape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
     MAPE (Mean Absolute Percentage Error)
-    
+
     Args:
         y_true: 真値
         y_pred: 予測値
-    
+
     Returns:
         float: MAPE (%)
     """
@@ -49,11 +49,11 @@ def mape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 def calculate_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
     """
     各種評価指標を計算
-    
+
     Args:
         y_true: 真値
         y_pred: 予測値
-    
+
     Returns:
         dict: 評価指標の辞書
     """
@@ -64,4 +64,3 @@ def calculate_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
         "mape": mape(y_true, y_pred),
         "r2": r2_score(y_true, y_pred),
     }
-
