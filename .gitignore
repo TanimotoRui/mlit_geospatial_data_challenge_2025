@@ -98,5 +98,8 @@ wandb/
 # Submissions (keep track in Git)
 # submissions/
 
+# CatBoost
+catboost_info/
+
 README.pdf
 catboost_info/*

@@ -38,8 +38,11 @@ check:  ## フォーマット、リント、テストを実行
 pre-commit:  ## pre-commitフックを実行
 	uv run pre-commit run --all-files
 
-baseline:  ## ベースラインモデルを実行
+baseline:  ## ベースラインモデルを実行（シンプル版）
 	uv run python scripts/baseline_catboost.py
+
+baseline-improved:  ## 改善版ベースラインを実行（特徴量エンジニアリング版）
+	uv run python scripts/baseline_improved.py
 
 notebook:  ## Jupyter Labを起動
 	uv run jupyter lab
