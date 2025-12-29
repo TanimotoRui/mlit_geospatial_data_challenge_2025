@@ -99,3 +99,4 @@ wandb/
 # submissions/
 
 README.pdf
+catboost_info/*
