@@ -429,10 +429,28 @@ mlit_geospatial_data_challenge_2025/
 3. **モデル開発**: `notebooks/models/` で実験 → `experiments/` で管理
 4. **提出**: `submissions/` に予測結果を保存して提出
 
+### CI/CD
+
+プロジェクトにはGitHub Actionsによる自動チェックを設定済み：
+
+```bash
+# pre-commitフックのインストール（コミット前に自動チェック）
+make install-dev
+
+# 手動でチェック実行
+make pre-commit
+
+# プッシュ前に全チェック実行
+make check
+```
+
+詳細は[docs/cicd.md](docs/cicd.md)を参照。
+
 ### ドキュメント
 
 - [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) - プロジェクト構造の詳細
 - [docs/uv_usage.md](docs/uv_usage.md) - uvの使い方ガイド
+- [docs/cicd.md](docs/cicd.md) - CI/CDガイド
 - [docs/data_description.md](docs/data_description.md) - データの説明
 - [docs/features.md](docs/features.md) - 特徴量一覧
 - [docs/experiments.md](docs/experiments.md) - 実験ログ

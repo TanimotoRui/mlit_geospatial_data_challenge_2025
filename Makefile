@@ -8,6 +8,7 @@ install:  ## 依存パッケージのインストール
 
 install-dev:  ## 開発用パッケージも含めてインストール
 	uv sync --extra dev
+	uv run pre-commit install
 
 install-all:  ## すべてのオプション依存関係をインストール
 	uv sync --all-extras
@@ -33,6 +34,9 @@ check:  ## フォーマット、リント、テストを実行
 	make format
 	make lint
 	make test
+
+pre-commit:  ## pre-commitフックを実行
+	uv run pre-commit run --all-files
 
 notebook:  ## Jupyter Labを起動
 	uv run jupyter lab
