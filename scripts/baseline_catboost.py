@@ -95,16 +95,28 @@ print("\n[2] 特徴量作成...")
 train_features = train.drop(columns=drop_cols, errors="ignore")
 test_features = test.drop(columns=drop_cols, errors="ignore")
 
-# カテゴリカル変数の自動検出
+# カテゴリカル変数の自動検出と変換
 cat_features = []
 for col in train_features.columns:
     if train_features[col].dtype == "object":
         cat_features.append(col)
-    elif train_features[col].nunique() < 50:  # ユニーク数が少ないものもカテゴリカルに
+        # NaNを文字列に変換
+        train_features[col] = train_features[col].fillna("missing").astype(str)
+        test_features[col] = test_features[col].fillna("missing").astype(str)
+    elif train_features[col].nunique() < 50 and train_features[col].dtype in ['int64', 'int32']:
+        # 整数型でユニーク数が少ないものをカテゴリカルに
         cat_features.append(col)
+        train_features[col] = train_features[col].fillna(-999).astype(str)
+        test_features[col] = test_features[col].fillna(-999).astype(str)
 
 print(f"特徴量数: {len(train_features.columns)}")
 print(f"カテゴリカル特徴量数: {len(cat_features)}")
+print(f"カテゴリカル特徴量: {cat_features[:10]}...")  # 最初の10個を表示
+
+# 数値特徴量の欠損値を-999で埋める（CatBoostは欠損値を扱えるが念のため）
+numeric_cols = train_features.select_dtypes(include=[np.number]).columns
+train_features[numeric_cols] = train_features[numeric_cols].fillna(-999)
+test_features[numeric_cols] = test_features[numeric_cols].fillna(-999)
 
 # CatBoost用のPool作成
 print("\n[3] CatBoostモデル学習...")
