@@ -175,6 +175,10 @@ def preprocess_for_catboost(
     target = train[target_col].copy()
     if apply_log:
         print("目的変数にlog1p変換を適用")
+        # 負の値や欠損値を除外してからlog1p
+        if (target < 0).any():
+            print(f"  警告: 負の値が {(target < 0).sum()} 件検出されました（0に置換）")
+            target = target.clip(lower=0)
         target = np.log1p(target)
 
     # 削除する列

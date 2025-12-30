@@ -216,10 +216,14 @@ def create_target_encoding_features(
         )
 
         # 欠損値を全体平均で埋める
-        train_copy[f"{col}_target_encoded"].fillna(global_mean, inplace=True)
-        test_copy[f"{col}_target_encoded"].fillna(global_mean, inplace=True)
-        train_copy[f"{col}_count"].fillna(0, inplace=True)
-        test_copy[f"{col}_count"].fillna(0, inplace=True)
+        train_copy[f"{col}_target_encoded"] = train_copy[
+            f"{col}_target_encoded"
+        ].fillna(global_mean)
+        test_copy[f"{col}_target_encoded"] = test_copy[f"{col}_target_encoded"].fillna(
+            global_mean
+        )
+        train_copy[f"{col}_count"] = train_copy[f"{col}_count"].fillna(0)
+        test_copy[f"{col}_count"] = test_copy[f"{col}_count"].fillna(0)
 
     print(f"  - Target encoding: {len(categorical_cols) * 2} features")
 
@@ -302,7 +306,9 @@ def create_derived_features(df: pd.DataFrame) -> pd.DataFrame:
 
     # 駅距離の対数変換（外れ値に頑健）
     if "walk_distance1" in df.columns:
-        new_columns["log_walk_distance1"] = np.log1p(df["walk_distance1"])
+        # 負の値や欠損値を0に変換してからlog1p
+        walk_dist = df["walk_distance1"].fillna(0).clip(lower=0)
+        new_columns["log_walk_distance1"] = np.log1p(walk_dist)
 
     # 新しい列を一度に結合
     feature_count = len(new_columns)
