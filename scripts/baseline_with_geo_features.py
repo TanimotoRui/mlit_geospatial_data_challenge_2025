@@ -33,7 +33,7 @@ from src.features.geo_features import (  # noqa: E402
 )
 from src.models.train_catboost import predict_with_models, train_catboost_cv  # noqa: E402
 
-warnings.filterwarnings("ignore")
+# warnings.filterwarnings("ignore")  # Warning表示を有効化
 
 # パス設定
 DATA_DIR = project_root / "data"
