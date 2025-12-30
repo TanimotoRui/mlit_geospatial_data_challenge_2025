@@ -288,13 +288,13 @@ def create_derived_features(df: pd.DataFrame) -> pd.DataFrame:
         building_age = 2023 - df["year_built"]
         new_columns["building_age"] = building_age.clip(lower=0)
 
-    # 単価（価格/面積）
-    if "money_room" in df.columns and "house_area" in df.columns:
-        new_columns["price_per_area"] = df["money_room"] / (df["house_area"] + 1)
+    # 単価（価格/面積）- データリークのため削除
+    # if "money_room" in df.columns and "house_area" in df.columns:
+    #     new_columns["price_per_area"] = df["money_room"] / (df["house_area"] + 1)
 
-    # 共益費の割合
-    if "money_kyoueki" in df.columns and "money_room" in df.columns:
-        new_columns["kyoueki_ratio"] = df["money_kyoueki"] / (df["money_room"] + 1)
+    # 共益費の割合 - データリークのため削除
+    # if "money_kyoueki" in df.columns and "money_room" in df.columns:
+    #     new_columns["kyoueki_ratio"] = df["money_kyoueki"] / (df["money_room"] + 1)
 
     # 時系列特徴量
     if "target_ym" in df.columns:
