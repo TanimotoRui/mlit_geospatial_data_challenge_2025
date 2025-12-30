@@ -19,7 +19,8 @@ def expand_slash_features(df: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
     Returns:
         展開後のDataFrame
     """
-    df_expanded = df.copy()
+    # 新しい列を格納する辞書
+    new_columns = {}
 
     for col in columns:
         if col not in df.columns:
@@ -34,9 +35,16 @@ def expand_slash_features(df: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
         # 各値のone-hot特徴量を作成
         for value in sorted(unique_values):
             new_col = f"{col}_{value}"
-            df_expanded[new_col] = df[col].apply(
+            new_columns[new_col] = df[col].apply(
                 lambda x: 1 if isinstance(x, str) and value in x.split("/") else 0
             )
+
+    # 全ての新しい列を一度に結合（断片化を回避）
+    if new_columns:
+        new_df = pd.DataFrame(new_columns, index=df.index)
+        df_expanded = pd.concat([df, new_df], axis=1)
+    else:
+        df_expanded = df.copy()
 
     return df_expanded
 
@@ -51,8 +59,6 @@ def process_date_features(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         処理後のDataFrame
     """
-    df_processed = df.copy()
-
     date_columns = [
         "building_create_date",
         "building_modify_date",
@@ -69,22 +75,33 @@ def process_date_features(df: pd.DataFrame) -> pd.DataFrame:
         "usable_date",
     ]
 
+    # 新しい列を格納する辞書
+    new_columns = {}
+    cols_to_drop = []
+
     for col in date_columns:
         if col not in df.columns:
             continue
 
         # 日付をdatetimeに変換
-        df_processed[col] = pd.to_datetime(df_processed[col], errors="coerce")
+        date_series = pd.to_datetime(df[col], errors="coerce")
 
         # 年、月、年月を抽出
-        df_processed[f"{col}_year"] = df_processed[col].dt.year
-        df_processed[f"{col}_month"] = df_processed[col].dt.month
-        df_processed[f"{col}_ym"] = (
-            df_processed[col].dt.year * 100 + df_processed[col].dt.month
-        )
+        new_columns[f"{col}_year"] = date_series.dt.year
+        new_columns[f"{col}_month"] = date_series.dt.month
+        new_columns[f"{col}_ym"] = date_series.dt.year * 100 + date_series.dt.month
 
-        # 元の列を削除
-        df_processed = df_processed.drop(columns=[col])
+        # 元の列を削除リストに追加
+        cols_to_drop.append(col)
+
+    # 全ての新しい列を一度に結合（断片化を回避）
+    if new_columns:
+        new_df = pd.DataFrame(new_columns, index=df.index)
+        df_processed = pd.concat([df, new_df], axis=1)
+        # 元の日付列を削除
+        df_processed = df_processed.drop(columns=cols_to_drop)
+    else:
+        df_processed = df.copy()
 
     return df_processed
 
@@ -99,14 +116,13 @@ def process_address_features(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         処理後のDataFrame
     """
-    df_processed = df.copy()
-
     # 都道府県と市区町村を抽出
     if "full_address" in df.columns:
-        df_processed["prefecture"] = df_processed["full_address"].str[:3]
+        new_columns = {}
+        new_columns["prefecture"] = df["full_address"].str[:3]
 
         # 市区町村の抽出（簡易版）
-        df_processed["city"] = df_processed["full_address"].apply(
+        new_columns["city"] = df["full_address"].apply(
             lambda x: (
                 x.split("市")[0] + "市"
                 if "市" in str(x)
@@ -123,6 +139,12 @@ def process_address_features(df: pd.DataFrame) -> pd.DataFrame:
                 )
             )
         )
+
+        # 新しい列を一度に追加
+        new_df = pd.DataFrame(new_columns, index=df.index)
+        df_processed = pd.concat([df, new_df], axis=1)
+    else:
+        df_processed = df.copy()
 
     return df_processed
 

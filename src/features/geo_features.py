@@ -242,8 +242,6 @@ def create_distance_features(
     """
     print("\n[Distance Features]")
 
-    df_copy = df.copy()
-
     # 主要都市の緯度経度（例）
     major_cities = {
         "tokyo": (35.6762, 139.6503),
@@ -251,11 +249,16 @@ def create_distance_features(
         "nagoya": (35.1815, 136.9066),
     }
 
-    # 各主要都市までの距離を計算
+    # 各主要都市までの距離を一度に計算
+    new_columns = {}
     for city_name, (city_lat, city_lon) in major_cities.items():
-        df_copy[f"distance_to_{city_name}"] = np.sqrt(
-            (df_copy[lat_col] - city_lat) ** 2 + (df_copy[lon_col] - city_lon) ** 2
+        new_columns[f"distance_to_{city_name}"] = np.sqrt(
+            (df[lat_col] - city_lat) ** 2 + (df[lon_col] - city_lon) ** 2
         )
+
+    # 新しい列を一度に結合
+    new_df = pd.DataFrame(new_columns, index=df.index)
+    df_copy = pd.concat([df, new_df], axis=1)
 
     print(f"  - Distance to major cities: {len(major_cities)} features")
 
@@ -274,39 +277,40 @@ def create_derived_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     print("\n[Derived Features]")
 
-    df_copy = df.copy()
-    feature_count = 0
+    new_columns = {}
 
     # 築年数の計算
     if "year_built" in df.columns:
-        df_copy["building_age"] = 2023 - df_copy["year_built"]
-        df_copy["building_age"] = df_copy["building_age"].clip(lower=0)
-        feature_count += 1
+        building_age = 2023 - df["year_built"]
+        new_columns["building_age"] = building_age.clip(lower=0)
 
     # 単価（価格/面積）
     if "money_room" in df.columns and "house_area" in df.columns:
-        df_copy["price_per_area"] = df_copy["money_room"] / (df_copy["house_area"] + 1)
-        feature_count += 1
+        new_columns["price_per_area"] = df["money_room"] / (df["house_area"] + 1)
 
     # 共益費の割合
     if "money_kyoueki" in df.columns and "money_room" in df.columns:
-        df_copy["kyoueki_ratio"] = df_copy["money_kyoueki"] / (
-            df_copy["money_room"] + 1
-        )
-        feature_count += 1
+        new_columns["kyoueki_ratio"] = df["money_kyoueki"] / (df["money_room"] + 1)
 
     # 時系列特徴量
     if "target_ym" in df.columns:
-        df_copy["target_year"] = df_copy["target_ym"].astype(int) // 100
-        df_copy["target_month"] = df_copy["target_ym"].astype(int) % 100
-        df_copy["is_january"] = (df_copy["target_month"] == 1).astype(int)
-        df_copy["is_july"] = (df_copy["target_month"] == 7).astype(int)
-        feature_count += 4
+        target_ym_int = df["target_ym"].astype(int)
+        new_columns["target_year"] = target_ym_int // 100
+        new_columns["target_month"] = target_ym_int % 100
+        new_columns["is_january"] = (new_columns["target_month"] == 1).astype(int)
+        new_columns["is_july"] = (new_columns["target_month"] == 7).astype(int)
 
     # 駅距離の対数変換（外れ値に頑健）
     if "walk_distance1" in df.columns:
-        df_copy["log_walk_distance1"] = np.log1p(df_copy["walk_distance1"])
-        feature_count += 1
+        new_columns["log_walk_distance1"] = np.log1p(df["walk_distance1"])
+
+    # 新しい列を一度に結合
+    feature_count = len(new_columns)
+    if new_columns:
+        new_df = pd.DataFrame(new_columns, index=df.index)
+        df_copy = pd.concat([df, new_df], axis=1)
+    else:
+        df_copy = df.copy()
 
     print(f"  - Derived features: {feature_count} features")
 
