@@ -64,6 +64,11 @@ venv.bak/
 # uv
 .python-version
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # IDE
 .vscode/
 .idea/
